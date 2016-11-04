@@ -23,7 +23,10 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass, String host) {
         ServiceGenerator.host = host;
-        Retrofit retrofit = builder.client(httpClient.build()).build();
+        Retrofit retrofit = builder
+                .client(httpClient.build())
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         return retrofit.create(serviceClass);
     }
 }

@@ -11,13 +11,15 @@ import java.io.Serializable;
 public class Book implements Serializable {
 
     @SerializedName("id")
-    int id;
+    public int id;
     @SerializedName("title")
-    String title;
+    public String title;
+    @SerializedName("author")
+    public String author;
     @SerializedName("about")
-    String author;
-    @SerializedName("about")
-    String about;
+    public String about;
     @SerializedName("timeDevolution")
-    long timeDevolution;
+    public long timeDevolution;
+    @SerializedName("available")
+    public boolean available;
 }

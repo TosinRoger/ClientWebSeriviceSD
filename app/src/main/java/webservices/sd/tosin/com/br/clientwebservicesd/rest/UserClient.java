@@ -11,7 +11,6 @@ import webservices.sd.tosin.com.br.clientwebservicesd.models.User;
  */
 
 public interface UserClient {
-
     @POST("/webservicessd/rest/user")
     Call<CustomResponse> createOrUpdate(@Body  User user);
 

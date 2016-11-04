@@ -1,6 +1,7 @@
 package webservices.sd.tosin.com.br.clientwebservicesd.ui.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -61,7 +62,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         }
     }
 
-    private void singin(User user, String host) {
+    private void singin(final User user, final String host) {
         UserClient client = ServiceGenerator.createService(UserClient.class, host);
         Call<CustomResponse> call = client.createOrUpdate(user);
         call.enqueue(new Callback<CustomResponse>() {
@@ -69,7 +70,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                 CustomResponse resp = response.body();
                 if (response.isSuccessful()) {
-                    CustomMessageDialog.message(activity, "OK", resp.msg);
+                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                    intent.putExtra("user", user);
+                    intent.putExtra("host", host);
+                    startActivity(intent);
+                    finish();
                 }
                 else {
 
