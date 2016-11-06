@@ -4,6 +4,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.Path;
 import webservices.sd.tosin.com.br.clientwebservicesd.models.Book;
 
@@ -18,4 +19,6 @@ public interface BookClient {
     Call<List<Book>> getBooks(@Path("id") long id);
     @GET("/webservicessd/rest/books/name/{title}")
     Call<List<Book>> getBooks(@Path("title") String title);
+    @GET("/webservicessd/rest/books/mybooks")
+    Call<List<Book>> getMyBooks(@Header("Authorization") String authorization);
 }

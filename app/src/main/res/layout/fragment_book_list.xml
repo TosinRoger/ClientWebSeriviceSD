@@ -10,4 +10,4 @@
     android:layout_marginRight="16dp"
     app:layoutManager="LinearLayoutManager"
     tools:context="webservices.sd.tosin.com.br.clientwebservicesd.ui.fragments.BookFragment"
-    tools:listitem="@layout/fragment_book" />
+    tools:listitem="@layout/item_book" />

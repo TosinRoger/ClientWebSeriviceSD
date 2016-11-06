@@ -54,9 +54,12 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             String password = editTextPassword.getText().toString();
             String host = editTextHost.getText().toString();
 
-            username = "teste";
-            password = "123123";
-            host = "192.168.0.121";
+            if (username.isEmpty())
+                username = "teste";
+            if (password.isEmpty())
+                password = "123123";
+            if (host.isEmpty())
+                host = "192.168.0.121";
 
             singin(new User(username, password), host);
         }

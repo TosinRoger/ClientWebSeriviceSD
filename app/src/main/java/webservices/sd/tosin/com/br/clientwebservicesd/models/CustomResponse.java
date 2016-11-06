@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName;
 public class CustomResponse {
 
     @SerializedName("status")
-    String status;
+    public String status;
     @SerializedName("msg")
     public String msg;
 }

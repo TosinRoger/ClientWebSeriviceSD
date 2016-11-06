@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -33,6 +34,7 @@ import webservices.sd.tosin.com.br.clientwebservicesd.rest.ServiceGenerator;
 import webservices.sd.tosin.com.br.clientwebservicesd.ui.activities.MainActivity;
 import webservices.sd.tosin.com.br.clientwebservicesd.ui.dialogs.CustomMessageDialog;
 import webservices.sd.tosin.com.br.clientwebservicesd.ui.dialogs.DetailBookDialog;
+import webservices.sd.tosin.com.br.clientwebservicesd.ui.dialogs.DetailMyBookDialog;
 
 /**
  * A fragment representing a list of Items.
@@ -40,28 +42,30 @@ import webservices.sd.tosin.com.br.clientwebservicesd.ui.dialogs.DetailBookDialo
  * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
  * interface.
  */
-public class BookFragment extends Fragment implements DetailBookDialog.DialogClick {
+public class MyBookFragment extends Fragment implements DetailMyBookDialog.DialogClick {
 
     // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
     // TODO: Customize parameters
     private int mColumnCount = 1;
+    private MyBookRecyclerViewAdapter adapter;
     private User user;
     private List<Book> books;
     private Context context;
-    private BookRecyclerViewAdapter adapter;
+    private RecyclerView recyclerView;
+    private TextView emptyList;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
      * fragment (e.g. upon screen orientation changes).
      */
-    public BookFragment() {
+    public MyBookFragment() {
     }
 
     // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
-    public static BookFragment newInstance(int columnCount, User user) {
-        BookFragment fragment = new BookFragment();
+    public static MyBookFragment newInstance(int columnCount, User user) {
+        MyBookFragment fragment = new MyBookFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         args.putSerializable("user", user);
@@ -77,30 +81,35 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
             user = (User) getArguments().getSerializable("user");
         }
-
         if (books == null)
             books = new ArrayList<>();
+
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_book_list, container, false);
+
+        View view = inflater.inflate(R.layout.fragment_my_book_list, container, false);
 
         context = view.getContext();
 
-        // Set the adapter
-        if (view instanceof RecyclerView) {
-            Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
-            if (mColumnCount <= 1) {
-                recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
-                recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
-            }
-            adapter = new BookRecyclerViewAdapter(books, mListener);
-            recyclerView.setAdapter(adapter);
+        recyclerView = (RecyclerView) view.findViewById(R.id.list);
+        emptyList = (TextView) view.findViewById(R.id.emptyList);
+
+        Context context = view.getContext();
+        if (mColumnCount <= 1) {
+            recyclerView.setLayoutManager(new LinearLayoutManager(context));
+        } else {
+            recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
         }
+        adapter = new MyBookRecyclerViewAdapter(books, mListener);
+        recyclerView.setAdapter(adapter);
+
+        if (books.isEmpty())
+            emptyList.setVisibility(View.VISIBLE);
+        else
+            emptyList.setVisibility(View.GONE);
 
         fetchBooks();
         return view;
@@ -147,12 +156,12 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
     }
 
     @Override
-    public void clickLoan(Book book) {
+    public void clickDevolution(Book book) {
         LoanClient client = ServiceGenerator.createService(LoanClient.class, MainActivity.host);
         Map<String, Integer> map = new HashMap<>();
         map.put("id", book.id);
         String authorization = user.base64();
-        Call<CustomResponse> call = client.loan(authorization, map);
+        Call<CustomResponse> call = client.devolution(authorization, map);
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
@@ -160,8 +169,7 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
                     fetchBooks();
                     CustomResponse resp = response.body();
                     CustomMessageDialog.message(context, resp.status, resp.msg);
-                }
-                else {
+                } else {
                     CustomMessageDialog.message(context, "ERRO", "Problemas na requisição");
                 }
             }
@@ -174,12 +182,12 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
     }
 
     @Override
-    public void clickReservation(Book book) {
+    public void clickRenovation(Book book) {
         LoanClient client = ServiceGenerator.createService(LoanClient.class, MainActivity.host);
         Map<String, Integer> map = new HashMap<>();
         map.put("id", book.id);
         String authorization = user.base64();
-        Call<CustomResponse> call = client.reservation(authorization, map);
+        Call<CustomResponse> call = client.renovation(authorization, map);
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
@@ -187,8 +195,7 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
                     fetchBooks();
                     CustomResponse resp = response.body();
                     CustomMessageDialog.message(context, resp.status, resp.msg);
-                }
-                else {
+                } else {
                     CustomMessageDialog.message(context, "ERRO", "Problemas na requisição");
                 }
             }
@@ -199,7 +206,6 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
             }
         });
     }
-
 
     /**
      * This interface must be implemented by activities that contain this
@@ -216,19 +222,28 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
         void onListFragmentInteraction(Book item);
     }
 
-
-
     private void fetchBooks() {
         BookClient client = ServiceGenerator.createService(BookClient.class, MainActivity.host);
-        Call<List<Book>> call = client.getBooks();
+        String authorization = user.base64();
+        Call<List<Book>> call = client.getMyBooks(authorization);
         call.enqueue(new Callback<List<Book>>() {
             @Override
             public void onResponse(Call<List<Book>> call, Response<List<Book>> response) {
                 if (response.isSuccessful()) {
-                    books = response.body();
-                    adapter.setList(books);
-                }
-                else {
+
+                    Object object = response.body();
+                    if (object instanceof CustomResponse)
+                        CustomMessageDialog.message(context, ((CustomResponse) object).status, ((CustomResponse) object).msg);
+                    else {
+                        books = response.body();
+                        adapter.setList(books);
+
+                        if (books.isEmpty())
+                            emptyList.setVisibility(View.VISIBLE);
+                        else
+                            emptyList.setVisibility(View.GONE);
+                    }
+                } else {
                     CustomMessageDialog.message(context, "Erro", "problemas na requisicao");
                 }
             }
@@ -240,15 +255,13 @@ public class BookFragment extends Fragment implements DetailBookDialog.DialogCli
         });
     }
 
-
     private OnListFragmentInteractionListener mListener = new OnListFragmentInteractionListener() {
         @Override
         public void onListFragmentInteraction(Book item) {
             FragmentManager fm = getChildFragmentManager();
-            DetailBookDialog dialog = DetailBookDialog.newInstance(item);
-            dialog.show(fm, "detail_book");
+            DetailMyBookDialog dialog = DetailMyBookDialog.newInstance(item);
+            dialog.show(fm, "detail_my_book");
 
         }
     };
-
 }

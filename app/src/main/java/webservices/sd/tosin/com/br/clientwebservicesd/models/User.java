@@ -27,6 +27,7 @@ public class User implements Serializable {
 
         byte[] encode = Base64.encode(temp.getBytes(), Base64.DEFAULT);
         String end = "Basic " + new String(encode);
+        end = end.replace("\n", "");
         return end;
     }
 }

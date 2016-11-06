@@ -1,35 +1,35 @@
 package webservices.sd.tosin.com.br.clientwebservicesd.ui.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
 import webservices.sd.tosin.com.br.clientwebservicesd.R;
 import webservices.sd.tosin.com.br.clientwebservicesd.models.User;
 import webservices.sd.tosin.com.br.clientwebservicesd.ui.fragments.BookFragment;
+import webservices.sd.tosin.com.br.clientwebservicesd.ui.fragments.MyBookFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static String host;
     private User user;
     private Toolbar toolbar;
-    public static String host;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setTitle("Todos os livros");
         setSupportActionBar(toolbar);
 
         if (getIntent().hasExtra("user"))
@@ -45,7 +45,6 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
 
         onNavigationItemSelected(navigationView.getMenu().getItem(0));
 
@@ -64,7 +63,7 @@ public class MainActivity extends AppCompatActivity
             super.onBackPressed();
         }
     }
-    
+
 
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -74,20 +73,24 @@ public class MainActivity extends AppCompatActivity
 
         int container = R.id.content_main;
 
-//        toolbar.setTitle("Outro titulo");
-
-        if (id == R.id.nav_camera) {
+        if (id == R.id.store) {
             // Handle the camera action
+            toolbar.setTitle("Todos os livros");
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(container, BookFragment.newInstance(1))
+                    .replace(container, BookFragment.newInstance(1, user))
                     .commit();
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.library) {
+            toolbar.setTitle("Meus livros");
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(container, MyBookFragment.newInstance(1, user))
+                    .commit();
 
-        } else if (id == R.id.nav_slideshow) {
-
-        } else if (id == R.id.nav_manage) {
-
+        } else if (id == R.id.logout) {
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import webservices.sd.tosin.com.br.clientwebservicesd.R;
@@ -13,15 +14,15 @@ import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link Book} and makes a call to the
- * specified {@link MyBookFragment.OnListFragmentInteractionListener}.
+ * specified {@link BookFragment.OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class MyBookRecyclerViewAdapter extends RecyclerView.Adapter<MyBookRecyclerViewAdapter.ViewHolder> {
+public class BookRecyclerViewAdapter extends RecyclerView.Adapter<BookRecyclerViewAdapter.ViewHolder> {
 
     private List<Book> mValues;
-    private final MyBookFragment.OnListFragmentInteractionListener mListener;
+    private final BookFragment.OnListFragmentInteractionListener mListener;
 
-    public MyBookRecyclerViewAdapter(List<Book> items, MyBookFragment.OnListFragmentInteractionListener listener) {
+    public BookRecyclerViewAdapter(List<Book> items, BookFragment.OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -29,7 +30,7 @@ public class MyBookRecyclerViewAdapter extends RecyclerView.Adapter<MyBookRecycl
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.item_my_book, parent, false);
+                .inflate(R.layout.item_book, parent, false);
         return new ViewHolder(view);
     }
 
@@ -38,7 +39,7 @@ public class MyBookRecyclerViewAdapter extends RecyclerView.Adapter<MyBookRecycl
         holder.mItem = mValues.get(position);
         holder.mAutor.setText(mValues.get(position).author);
         holder.mContentView.setText(mValues.get(position).title);
-        holder.mDevolution.setText(mValues.get(position).getTimeDevolution());
+        holder.mAvailable.setChecked(mValues.get(position).available);
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -66,7 +67,7 @@ public class MyBookRecyclerViewAdapter extends RecyclerView.Adapter<MyBookRecycl
         public final View mView;
         public final TextView mAutor;
         public final TextView mContentView;
-        public final TextView mDevolution;
+        public final CheckBox mAvailable;
         public Book mItem;
 
         public ViewHolder(View view) {
@@ -74,7 +75,7 @@ public class MyBookRecyclerViewAdapter extends RecyclerView.Adapter<MyBookRecycl
             mView = view;
             mAutor = (TextView) view.findViewById(R.id.textView_item_author);
             mContentView = (TextView) view.findViewById(R.id.textView_item_title);
-            mDevolution = (TextView) view.findViewById(R.id.textView_item_devolution);
+            mAvailable = (CheckBox) view.findViewById(R.id.checkBox);
         }
 
         @Override
