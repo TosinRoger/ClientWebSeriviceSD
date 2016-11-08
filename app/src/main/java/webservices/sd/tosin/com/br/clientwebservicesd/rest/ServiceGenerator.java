@@ -6,23 +6,25 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Created by tosin on 03/11/16.
+ *
+ * Utilizado pelo retrofit para criar a conexao com o servidor,
+ * estabelecer como retrofit ira fazer o parse das informacoes recebidas
+ * e o formato das informacoes recebidas, este caso JSON
  */
 
 public class ServiceGenerator {
 
-    public static final String API_BASE_URL = "http://%s:8080/";
-    public static String host = "192.168.0.121";
+    public static final String API_BASE_URL = "http://192.168.109.78:8080/";
 
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
     private static Retrofit.Builder builder =
             new Retrofit.Builder()
-                    .baseUrl(String.format(API_BASE_URL, host))
+                    .baseUrl(API_BASE_URL)
                     .addConverterFactory(GsonConverterFactory.create());
 
     public static <S> S createService(Class<S> serviceClass, String host) {
-        ServiceGenerator.host = host;
         Retrofit retrofit = builder
                 .client(httpClient.build())
                 .addConverterFactory(GsonConverterFactory.create())

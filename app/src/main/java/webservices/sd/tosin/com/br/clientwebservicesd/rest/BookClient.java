@@ -10,8 +10,9 @@ import webservices.sd.tosin.com.br.clientwebservicesd.models.Book;
 
 /**
  * Created by tosin on 03/11/16.
+ *
+ * Interface utilizada pelo retrofit para encontrar os ENDPOINTs no servidor
  */
-
 public interface BookClient {
     @GET("/webservicessd/rest/books")
     Call<List<Book>> getBooks();

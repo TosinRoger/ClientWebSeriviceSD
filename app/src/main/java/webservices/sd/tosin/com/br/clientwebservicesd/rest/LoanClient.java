@@ -8,8 +8,9 @@ import webservices.sd.tosin.com.br.clientwebservicesd.models.CustomResponse;
 
 /**
  * Created by tosin on 05/11/16.
+ *
+ * Interface utilizada pelo retrofit para encontrar os ENDPOINTs no servidor
  */
-
 public interface LoanClient {
     @POST("/webservicessd/rest/loan")
     Call<CustomResponse> loan(@Header("Authorization") String authorization, @Body Object id);

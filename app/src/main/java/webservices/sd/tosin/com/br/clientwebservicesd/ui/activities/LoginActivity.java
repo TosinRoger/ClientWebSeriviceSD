@@ -59,12 +59,17 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             if (password.isEmpty())
                 password = "123123";
             if (host.isEmpty())
-                host = "192.168.0.121";
+                host = "192.168.100.146";
 
             singin(new User(username, password), host);
         }
     }
 
+    /**
+     * Faz a chamada do servidor para autenticar/criar usuario
+     * @param user
+     * @param host
+     */
     private void singin(final User user, final String host) {
         UserClient client = ServiceGenerator.createService(UserClient.class, host);
         Call<CustomResponse> call = client.createOrUpdate(user);
